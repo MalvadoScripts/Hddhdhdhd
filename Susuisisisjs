@@ -1,0 +1,86 @@
+local player = game.Players.LocalPlayer
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "malvado_scripts", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+local Tab = Window:MakeTab({
+    Name = "Tab 1",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+    Name = "LocalPlayer"
+})
+
+OrionLib:MakeNotification({
+    Name = "Welcome!",
+    Content = "Welcome to my hub!",
+    Image = "rbxassetid://4483345998",
+    Time = 5
+})
+
+local teleportActive = false
+local currentIndex = 1
+local location1 = Vector3.new(2003.26123046875, 408.1631164550781, 6092.9443359375)
+local location2 = Vector3.new(4561.103515625, 408.97308349609375, 6084.92529296875)
+
+local ToggleButton = Section:AddToggle({
+    Name = "🏆 inf",
+    Callback = function(isActive)
+        if isActive then
+            teleportActive = not teleportActive
+        end
+    end
+})
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if teleportActive then
+        if currentIndex == 1 then
+            player.Character:MoveTo(location1)
+            wait(1.5)
+            currentIndex = 2
+        elseif currentIndex == 2 then
+            player.Character:MoveTo(location2)
+            wait(1.5)
+            currentIndex = 1
+        end
+    end
+end)
+
+local autoEggsActive = false
+local autoEggsConnection
+
+local ToggleButton1 = Section:AddToggle({
+    Name = "auto eggs need 4sp",
+    Callback = function(isActive)
+        if isActive then
+            autoEggsActive = true
+            autoEggsConnection = game:GetService("RunService").Stepped:Connect(function()
+                game:GetService("ReplicatedStorage").Events.PlayerPressedKeyOnEgg:FireServer("9")
+            end)
+        else
+            autoEggsActive = false
+            if autoEggsConnection then
+                autoEggsConnection:Disconnect()
+            end
+        end
+    end
+})
+
+local ToggleButton = Section:AddToggle({
+    Name = "Auto rebirth",
+    Callback = function(isActive)
+        if isActive then
+            while isActive do
+                wait(5)
+                game:GetService("ReplicatedStorage").Events.AscendEvent:FireServer(true)
+            end
+        end
+    end
+})
+
+ToggleButton:SetCallback(function(isActive)
+    if not isActive then
+        -- Stop executing the script here, if needed
+    end
+end)
